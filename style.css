@@ -105,6 +105,23 @@ h1 {
   color: #e74c3c;
 }
 
+#clear-completed {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #4a90e2;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#clear-completed:hover {
+  background: #3a7bc8;
+}
+
 .empty-message {
   text-align: center;
   color: #999;

@@ -3,6 +3,7 @@ const STORAGE_KEY = "todos";
 const form = document.getElementById("todo-form");
 const input = document.getElementById("todo-input");
 const list = document.getElementById("todo-list");
+const clearCompletedBtn = document.getElementById("clear-completed");
 
 function loadTodos() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -72,6 +73,14 @@ function deleteTodo(id) {
   saveTodos(todos);
   render();
 }
+
+function clearCompleted() {
+  const todos = loadTodos().filter((t) => !t.completed);
+  saveTodos(todos);
+  render();
+}
+
+clearCompletedBtn.addEventListener("click", clearCompleted);
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
