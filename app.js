@@ -4,6 +4,31 @@ const form = document.getElementById("todo-form");
 const input = document.getElementById("todo-input");
 const list = document.getElementById("todo-list");
 const clearCompletedBtn = document.getElementById("clear-completed");
+const themeToggle = document.getElementById("theme-toggle");
+
+const THEME_KEY = "theme";
+
+function currentTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === "dark" || saved === "light") return saved;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+}
+
+function toggleTheme() {
+  const next = currentTheme() === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_KEY, next);
+  applyTheme(next);
+}
+
+applyTheme(currentTheme());
+themeToggle.addEventListener("click", toggleTheme);
 
 function loadTodos() {
   const raw = localStorage.getItem(STORAGE_KEY);
