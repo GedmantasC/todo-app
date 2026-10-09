@@ -1,1 +1,2 @@
-BAI program first app
+BAI program first app.
+for learning purposes. 
