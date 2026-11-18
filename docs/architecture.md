@@ -1,41 +1,70 @@
 # Architecture
 
-The app has three layers and one place that wires them together.
+A Next.js App Router app. Routes are thin; each feature owns its folder; data goes
+through one repository; the browser changes data only through Server Actions.
 
 ```
-               ┌──────────────────────── src/main.ts ────────────────────────┐
-  user action ─▶  core: new list  ─▶  storage: save  ─▶  ui: draw the list   │
-               └──────────────────────────────────────────────────────────────┘
-
-  src/core/      what the app does     pure functions, no DOM, no storage
-  src/storage/   where tasks are kept  behind the TodoStore interface
-  src/ui/        how it looks          reads state, writes DOM, never changes state
+ browser                               │  server
+                                       │
+ components/TodoApp  (client)          │  app/page.tsx            reads ?filter, loads todos
+   useOptimistic ── domain/rules ──┐   │    └─ server/queries.ts  getTodos() ─┐
+   click ─────────────────────────────▶│  server/actions.ts       Zod-check   │
+                                       │    └─ server/repository.ts ◀─────────┘
+                                       │         └─ db/ (Drizzle) ─▶ SQLite / Turso
 ```
 
-## The one rule
+## Folders
 
-**Dependencies point inwards.** `ui/` and `storage/` may import from `core/`; `core/` imports
-from nothing. That is why the rules can be tested in milliseconds without a browser
-(`tests/unit/`), and why changing how tasks are saved never touches a rule.
+```
+src/
+├── app/                    routes only: layout, page, loading, error
+├── features/
+│   ├── todos/
+│   │   ├── domain/         types, Zod schemas, pure rules       (no React, no database)
+│   │   ├── server/         repository, queries, Server Actions  (server-only)
+│   │   └── components/     React components                     (client where needed)
+│   └── theme/              the light/dark switch
+├── db/                     Drizzle schema and client
+└── env.ts                  every environment variable, validated
+drizzle/                    migrations, generated from src/db/schema.ts
+```
+
+**Why features, not file types?** A folder called `components/` across the whole app grows
+until nobody can find anything. A feature folder holds everything one person needs to change
+one thing, and deleting a feature is deleting a folder.
+
+## The rules that keep it apart
+
+| Rule                                                       | Enforced by                                 |
+| ---------------------------------------------------------- | ------------------------------------------- |
+| `domain/` imports nothing from React, Next or the database | review, and the unit tests run without them |
+| Components and routes never import `@/db` or a repository  | ESLint (`no-restricted-imports`)            |
+| Server code never reaches the browser bundle               | `import "server-only"` in every server file |
+| Every Server Action validates its input                    | the `reviewer` agent and code review        |
+| The schema and migrations match                            | CI ("Migrations match the schema")          |
 
 ## How one click flows
 
-1. The user ticks a checkbox. `ui/render.ts` calls the `onToggle(id)` handler it was given.
-2. `main.ts` asks `core/todos.ts` for a new list: `toggleTodo(todos, id)`.
-3. `main.ts` saves it with `store.save()` and calls `render()`.
-4. `render()` draws the filtered list and the footer from the new state.
+1. The user ticks a checkbox. `TodoApp` applies `toggleTodo` from `domain/rules.ts` to its
+   optimistic copy, so the tick shows at once.
+2. In the same transition it calls the Server Action `toggleTodoAction(id)`, which checks the id
+   with Zod and calls `repository.toggle(id)`.
+3. The action calls `revalidatePath("/")`. Next.js re-renders the page on the server with fresh
+   data from `getTodos()`, and React swaps the optimistic copy for the real one.
+4. If the action fails, the optimistic change disappears and the real data shows.
 
-State lives in exactly one place: the `todos` and `filter` variables in `main.ts`.
+The filter lives in the URL (`/?filter=active`), not in state: it survives a reload, can be
+shared, and the Back button works.
+
+## Data
+
+Locally the database is a file (`local.db`, from `DATABASE_URL`). In production it is a Turso
+database: same SQLite, same queries, a different URL and a token. See decision 0005.
 
 ## Tests
 
-| Layer         | Test                                               | Speed     |
-| ------------- | -------------------------------------------------- | --------- |
-| core, storage | `tests/unit/` (Vitest, jsdom)                      | about 2 s |
-| the whole app | `tests/e2e/` (Playwright, on the production build) | about 6 s |
-
-## When to change this
-
-If the app grows a server, add `src/storage/api-store.ts` implementing `TodoStore` and pick
-the store in `main.ts`. If state gets complex (undo, sync), consider a small store module
-before reaching for a framework. Record either choice in `docs/decisions/`.
+| What                        | Where                           | How                                            |
+| --------------------------- | ------------------------------- | ---------------------------------------------- |
+| Rules and schemas           | `tests/unit/rules.test.ts`      | pure functions, milliseconds                   |
+| Real queries and migrations | `tests/unit/repository.test.ts` | in-memory SQLite per test                      |
+| The whole app               | `tests/e2e/`                    | Playwright on a production build, own `e2e.db` |

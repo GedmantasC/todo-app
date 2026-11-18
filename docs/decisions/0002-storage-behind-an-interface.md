@@ -1,6 +1,6 @@
 # 0002. Storage behind an interface, old data keeps loading
 
-Date: 2026-11-18 · Status: accepted
+Date: 2026-11-18 · Status: replaced by 0005
 
 ## Context
 

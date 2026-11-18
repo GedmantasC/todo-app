@@ -1,6 +1,6 @@
 # 0001. TypeScript and Vite instead of plain files
 
-Date: 2026-11-18 · Status: accepted
+Date: 2026-11-18 · Status: replaced by 0004
 
 ## Context
 

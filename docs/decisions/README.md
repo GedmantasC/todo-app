@@ -24,8 +24,11 @@ What we do now.
 What gets easier, what gets harder, what we gave up.
 ```
 
-| #                                           | Decision                                            |
-| ------------------------------------------- | --------------------------------------------------- |
-| [0001](0001-typescript-and-vite.md)         | TypeScript and Vite instead of plain files          |
-| [0002](0002-storage-behind-an-interface.md) | Storage behind an interface, old data keeps loading |
-| [0003](0003-no-framework.md)                | No UI framework (yet)                               |
+| #                                           | Decision                                            | Status           |
+| ------------------------------------------- | --------------------------------------------------- | ---------------- |
+| [0001](0001-typescript-and-vite.md)         | TypeScript and Vite instead of plain files          | replaced by 0004 |
+| [0002](0002-storage-behind-an-interface.md) | Storage behind an interface, old data keeps loading | replaced by 0005 |
+| [0003](0003-no-framework.md)                | No UI framework (yet)                               | replaced by 0004 |
+| [0004](0004-nextjs-app-router.md)           | Next.js with the App Router                         | accepted         |
+| [0005](0005-drizzle-and-sqlite.md)          | Drizzle with SQLite locally, Turso in production    | accepted         |
+| [0006](0006-feature-folders.md)             | Feature folders, thin routes                        | accepted         |

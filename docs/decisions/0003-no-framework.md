@@ -1,6 +1,6 @@
 # 0003. No UI framework (yet)
 
-Date: 2026-11-18 · Status: accepted
+Date: 2026-11-18 · Status: replaced by 0004
 
 ## Context
 

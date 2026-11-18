@@ -1,58 +1,78 @@
 # The Best App
 
 A small to-do app, built in the first sprints of the BAI programme for learning purposes, and
-then reorganised the way a real project is: clear folders, tests, CI, and instructions that
-both people and AI agents follow.
+then grown the way a real project grows: clear folders, a database, tests, CI, and
+instructions that both people and AI agents follow.
 
-**Live:** https://gedmantasc.github.io/todo-app/ · **The original version:** tag
-[`v1-before-reorg`](https://github.com/GedmantasC/todo-app/tree/v1-before-reorg)
+The same app at three stages, each a git tag:
+
+| Tag                                                                              | Stack                              | What it shows                                       |
+| -------------------------------------------------------------------------------- | ---------------------------------- | --------------------------------------------------- |
+| [`v1-before-reorg`](https://github.com/GedmantasC/todo-app/tree/v1-before-reorg) | 3 files, plain JavaScript          | where most projects start                           |
+| [`v2-vite`](https://github.com/GedmantasC/todo-app/tree/v2-vite)                 | Vite, TypeScript                   | layers, tests, tooling, agent setup                 |
+| `main`                                                                           | Next.js, React 19, Drizzle, SQLite | feature folders, server and client, a real database |
 
 ## Run it
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
+npm run dev        # creates local.db, applies migrations, opens http://localhost:3000
 ```
 
-In VS Code: install the recommended extensions when asked, then **F5** opens the app in Chrome
-with breakpoints, and **Ctrl+Shift+B** runs every check.
+Nothing else to set up: the database is a local file. To change settings, copy `.env.example`
+to `.env.local`.
+
+In VS Code: install the recommended extensions when asked. **F5** starts the app with
+breakpoints on both server and client; **Ctrl+Shift+B** runs every check.
 
 ## What's where
 
 ```
 todo-app/
-├── index.html              the page
 ├── src/
-│   ├── main.ts             wires everything together; holds the state
-│   ├── core/               what the app does: pure rules, no DOM
-│   ├── storage/            where tasks are kept: behind one interface
-│   ├── ui/                 how it looks: draws state, sends clicks back
-│   └── styles/
+│   ├── app/                    routes only: layout, page, loading, error
+│   ├── features/
+│   │   ├── todos/
+│   │   │   ├── domain/         types, Zod schemas, pure rules
+│   │   │   ├── server/         queries, repository, Server Actions
+│   │   │   └── components/     the React UI
+│   │   └── theme/              light and dark mode
+│   ├── db/                     Drizzle schema and client
+│   └── env.ts                  environment variables, validated at startup
+├── drizzle/                    database migrations (generated, committed)
 ├── tests/
-│   ├── unit/               the rules, in milliseconds (Vitest)
-│   └── e2e/                the real app in a real browser (Playwright)
+│   ├── unit/                   rules, and real queries on an in-memory database (Vitest)
+│   └── e2e/                    the built app in a real browser (Playwright)
 ├── docs/
-│   ├── architecture.md     the three layers and the one rule
-│   ├── decisions/          why things are the way they are
-│   ├── backlog.md          known problems and ideas
-│   └── workshop.md         a guided tour of this repo
-├── AGENTS.md               instructions for AI agents (CLAUDE.md points here)
-├── .claude/                Claude Code: permissions, a format hook, a skill, a reviewer agent
-├── .vscode/                shared editor settings, tasks, debugger, extensions
-├── .github/                CI, deploy to Pages, Dependabot, PR and issue templates
-└── CHANGELOG.md            what changed for users
+│   ├── architecture.md         the layers, the rules, how one click flows
+│   ├── decisions/              why things are the way they are
+│   ├── backlog.md              known problems and ideas
+│   └── workshop.md             a guided tour of this repo
+├── AGENTS.md                   instructions for AI agents (CLAUDE.md points here)
+├── .claude/                    Claude Code: permissions, format hook, skill, reviewer agent
+├── .vscode/                    shared settings, tasks, full-stack debugger, extensions
+├── .github/                    CI, Dependabot, PR and issue templates
+└── CHANGELOG.md                what changed for users
 ```
 
 ## Scripts
 
-| Command                           | What it does                                            |
-| --------------------------------- | ------------------------------------------------------- |
-| `npm run dev`                     | Live-reloading dev server                               |
-| `npm run check`                   | Typecheck, lint, format check, unit tests: what CI runs |
-| `npm test` / `npm run test:watch` | Unit tests, once or on every save                       |
-| `npm run test:e2e`                | Browser tests against the production build              |
-| `npm run build`                   | Production files in `dist/`                             |
-| `npm run format`                  | Format every file with Prettier                         |
+| Command                                | What it does                                                |
+| -------------------------------------- | ----------------------------------------------------------- |
+| `npm run dev`                          | Migrate the local database and start the dev server         |
+| `npm run check`                        | Types, lint, format check, unit tests: what CI runs         |
+| `npm test` / `npm run test:watch`      | Unit tests, once or on every save                           |
+| `npm run test:e2e`                     | Browser tests on a production build with their own database |
+| `npm run db:generate -- --name <what>` | Write a migration after changing `src/db/schema.ts`         |
+| `npm run db:migrate`                   | Apply migrations to `DATABASE_URL`                          |
+| `npm run db:studio`                    | Browse the data in Drizzle Studio                           |
+| `npm run build` / `npm start`          | Production build and server                                 |
+
+## Deploy
+
+Vercel plus a free Turso database: set `DATABASE_URL` (`libsql://…`) and `DATABASE_AUTH_TOKEN`
+in the Vercel project, and run `npm run db:migrate` against it once. Note that there are no
+accounts yet, so everyone with the link shares one list (see `docs/backlog.md`).
 
 ## Contributing
 
