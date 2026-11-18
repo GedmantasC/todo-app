@@ -1,119 +1,69 @@
-const STORAGE_KEY = "todos";
+/**
+ * Entry point: holds the state and wires the pieces together.
+ *
+ *   user action → core (pure rules) → store.save → render
+ *
+ * core/     what the app does      (no DOM, fully unit-tested)
+ * storage/  where tasks are kept   (behind the TodoStore interface)
+ * ui/       how it looks           (reads state, writes DOM)
+ */
+import "./styles/main.css";
+import { FILTERS, type Filter, type Todo } from "./core/types";
+import { addTodo, clearCompleted, countActive, deleteTodo, filterTodos, toggleTodo } from "./core/todos";
+import { createLocalStorageStore } from "./storage/local-storage";
+import { renderFooter, renderList } from "./ui/render";
+import { setupThemeToggle } from "./ui/theme";
 
-const form = document.getElementById("todo-form");
-const input = document.getElementById("todo-input");
-const list = document.getElementById("todo-list");
-const clearCompletedBtn = document.getElementById("clear-completed");
-const themeToggle = document.getElementById("theme-toggle");
-
-const THEME_KEY = "theme";
-
-function currentTheme() {
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved === "dark" || saved === "light") return saved;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+function $<T extends HTMLElement>(selector: string): T {
+  const el = document.querySelector<T>(selector);
+  if (!el) throw new Error(`Missing element: ${selector}`);
+  return el;
 }
 
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+const form = $<HTMLFormElement>("#todo-form");
+const input = $<HTMLInputElement>("#todo-input");
+const list = $<HTMLUListElement>("#todo-list");
+const count = $<HTMLElement>("#todo-count");
+const clearBtn = $<HTMLButtonElement>("#clear-completed");
+const filterButtons = document.querySelectorAll<HTMLButtonElement>("[data-filter]");
+
+const store = createLocalStorageStore();
+let todos: Todo[] = store.load();
+let filter: Filter = "all";
+
+function update(next: Todo[]): void {
+  todos = next;
+  store.save(todos);
+  render();
 }
 
-function toggleTheme() {
-  const next = currentTheme() === "dark" ? "light" : "dark";
-  localStorage.setItem(THEME_KEY, next);
-  applyTheme(next);
-}
-
-applyTheme(currentTheme());
-themeToggle.addEventListener("click", toggleTheme);
-
-function loadTodos() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  return raw ? JSON.parse(raw) : [];
-}
-
-function saveTodos(todos) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-}
-
-function render() {
-  const todos = loadTodos();
-  list.innerHTML = "";
-
-  if (todos.length === 0) {
-    const empty = document.createElement("li");
-    empty.className = "empty-message";
-    empty.textContent = "No tasks yet. Add one above!";
-    list.appendChild(empty);
-    return;
-  }
-
-  todos.forEach((todo) => {
-    const item = document.createElement("li");
-    item.className = "todo-item" + (todo.completed ? " completed" : "");
-
-    const text = document.createElement("span");
-    text.className = "todo-text";
-    text.textContent = todo.text;
-    text.addEventListener("click", () => toggleTodo(todo.id));
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.className = "delete-btn";
-    deleteBtn.textContent = "✕";
-    deleteBtn.setAttribute("aria-label", "Delete task");
-    deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
-
-    item.appendChild(text);
-    item.appendChild(deleteBtn);
-    list.appendChild(item);
+function render(): void {
+  renderList(list, filterTodos(todos, filter), filter, {
+    onToggle: (id) => update(toggleTodo(todos, id)),
+    onDelete: (id) => update(deleteTodo(todos, id)),
   });
+  renderFooter(count, filterButtons, countActive(todos), filter);
+  clearBtn.hidden = todos.length === countActive(todos);
 }
 
-function addTodo(text) {
-  const todos = loadTodos();
-  todos.push({
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
-    text,
-    completed: false,
-  });
-  saveTodos(todos);
-  render();
-}
-
-function toggleTodo(id) {
-  const todos = loadTodos();
-  const todo = todos.find((t) => t.id === id);
-  if (todo) {
-    todo.completed = !todo.completed;
-    saveTodos(todos);
-    render();
-  }
-}
-
-function deleteTodo(id) {
-  const todos = loadTodos().filter((t) => t.id !== id);
-  saveTodos(todos);
-  render();
-}
-
-function clearCompleted() {
-  const todos = loadTodos().filter((t) => !t.completed);
-  saveTodos(todos);
-  render();
-}
-
-clearCompletedBtn.addEventListener("click", clearCompleted);
-
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const text = input.value.trim();
-  if (!text) return;
-  addTodo(text);
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  update(addTodo(todos, input.value));
   input.value = "";
   input.focus();
 });
 
+clearBtn.addEventListener("click", () => update(clearCompleted(todos)));
+
+for (const button of filterButtons) {
+  button.addEventListener("click", () => {
+    const value = button.dataset.filter as Filter;
+    if (FILTERS.includes(value)) {
+      filter = value;
+      render();
+    }
+  });
+}
+
+setupThemeToggle($<HTMLButtonElement>("#theme-toggle"));
 render();
