@@ -11,6 +11,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  DATABASE_URL: file:ci.db
+
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -22,6 +25,19 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+
+      # Fails if someone changed src/db/schema.ts but forgot `npm run db:generate`.
+      - name: Migrations match the schema
+        run: |
+          npm run db:generate
+          git diff --exit-code -- drizzle || (echo "::error::Run 'npm run db:generate' and commit drizzle/." && exit 1)
+          test -z "$(git status --porcelain -- drizzle)" || (echo "::error::New migration not committed." && exit 1)
+
+      - uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: next-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**') }}
+          restore-keys: next-${{ hashFiles('package-lock.json') }}-
       - run: npm run build
 
   e2e:

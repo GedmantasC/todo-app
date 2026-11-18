@@ -7,12 +7,7 @@
       "type": "npm",
       "script": "dev",
       "isBackground": true,
-      // Tells VS Code when the server is ready, so F5 (launch.json) waits for it.
-      "problemMatcher": {
-        "owner": "vite",
-        "pattern": { "regexp": "^__never_matches__$" },
-        "background": { "activeBegins": true, "beginsPattern": "VITE", "endsPattern": "Local:" }
-      }
+      "problemMatcher": []
     },
     {
       "label": "Check everything (as CI does)",
@@ -32,6 +27,19 @@
       "label": "Browser tests",
       "type": "npm",
       "script": "test:e2e",
+      "problemMatcher": []
+    },
+    {
+      "label": "Apply database migrations",
+      "type": "npm",
+      "script": "db:migrate",
+      "problemMatcher": []
+    },
+    {
+      "label": "Open the database (Drizzle Studio)",
+      "type": "npm",
+      "script": "db:studio",
+      "isBackground": true,
       "problemMatcher": []
     }
   ]

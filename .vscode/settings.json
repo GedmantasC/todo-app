@@ -4,21 +4,25 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
   "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
 
   // Hide generated folders from the explorer and search, so you only see what you edit.
   "files.exclude": {
     "**/node_modules": true,
-    "dist": true,
+    ".next": true,
+    "next-env.d.ts": true,
+    "**/*.tsbuildinfo": true,
     "coverage": true,
     "playwright-report": true,
     "test-results": true
   },
-  "search.exclude": { "package-lock.json": true },
+  "search.exclude": { "package-lock.json": true, "drizzle/meta": true },
 
   // Group related files under one in the explorer: package.json hides its lock file and configs.
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json, .nvmrc, tsconfig.json, vite.config.ts, playwright.config.ts, eslint.config.js, .prettierrc.json, .prettierignore, .editorconfig, .gitattributes",
+    "package.json": "package-lock.json, .nvmrc, tsconfig.json, next.config.ts, drizzle.config.ts, vitest.config.ts, playwright.config.ts, eslint.config.js, .prettierrc.json, .prettierignore, .editorconfig, .gitattributes",
+    ".env.example": ".env, .env.local, *.db, *.db-*",
     "AGENTS.md": "CLAUDE.md",
     "README.md": "CHANGELOG.md"
   }

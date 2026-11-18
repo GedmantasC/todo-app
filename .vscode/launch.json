@@ -1,14 +1,30 @@
 {
-  // Run and Debug (F5): starts the dev server and opens Chrome with breakpoints in the .ts files.
+  // Run and Debug (F5). Breakpoints work in Server Components and Server Actions
+  // (the server side) and in client components (the browser side) at the same time.
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug the app in Chrome",
-      "type": "chrome",
+      "name": "Next.js: debug full stack",
+      "type": "node",
       "request": "launch",
-      "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}",
-      "preLaunchTask": "Dev server"
+      "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
+      "args": ["dev"],
+      "runtimeArgs": ["--inspect"],
+      "skipFiles": ["<node_internals>/**"],
+      "preLaunchTask": "Apply database migrations",
+      "serverReadyAction": {
+        "action": "debugWithChrome",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "webRoot": "${workspaceFolder}"
+      }
+    },
+    {
+      "name": "Next.js: debug server only",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
     }
   ]
 }

@@ -9,11 +9,20 @@
       "Bash(npm test)",
       "Bash(npm run test:e2e)",
       "Bash(npm run build)",
+      "Bash(npm run db:generate:*)",
+      "Bash(npm run db:migrate)",
       "Bash(git status)",
       "Bash(git diff:*)",
       "Bash(git log:*)"
     ],
-    "deny": ["Read(./.env)", "Read(./.env.*)", "Bash(git push --force:*)", "Bash(rm -rf:*)"]
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.local)",
+      "Read(./.env.production)",
+      "Edit(./drizzle/**)",
+      "Bash(git push --force:*)",
+      "Bash(rm -rf:*)"
+    ]
   },
   "hooks": {
     "PostToolUse": [
