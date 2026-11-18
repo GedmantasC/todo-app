@@ -1,22 +1,34 @@
-import js from "@eslint/js";
-import tseslint from "typescript-eslint";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
 
-export default tseslint.config(
-  { ignores: ["dist", "coverage", "playwright-report", "test-results"] },
-  js.configs.recommended,
-  ...tseslint.configs.recommended,
+const config = [
+  { ignores: [".next", "next-env.d.ts", "coverage", "playwright-report", "test-results", "drizzle"] },
+  ...nextVitals,
+  ...nextTs,
   {
     rules: {
-      // The one rule this project cares most about: user text never goes into innerHTML.
-      "no-restricted-properties": [
-        "error",
-        { property: "innerHTML", message: "Use textContent or DOM methods: user text is not HTML." },
-      ],
+      // User text is rendered by React, which escapes it. This is the one way around that.
+      "react/no-danger": "error",
     },
   },
   {
-    // Config files and the Claude Code hook run in Node, not the browser.
-    files: ["*.config.{js,ts}", ".claude/**/*.mjs"],
-    languageOptions: { globals: { process: "readonly", console: "readonly" } },
+    // The boundary that keeps the layers apart (docs/architecture.md):
+    // UI code may not reach the database directly; it goes through Server Actions.
+    files: ["src/**/components/**", "src/app/**/*.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/db/*", "**/server/repository"],
+              message: "Go through a Server Action or a query in server/.",
+            },
+          ],
+        },
+      ],
+    },
   },
-);
+];
+
+export default config;

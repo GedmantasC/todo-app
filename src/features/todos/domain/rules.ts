@@ -1,29 +1,26 @@
 /**
  * The app's rules, as pure functions.
  *
- * Nothing in this file touches the DOM, localStorage or the clock directly:
- * every function takes a list and returns a new one. That is what makes the
- * rules easy to test (tests/unit/todos.test.ts) and safe to change.
+ * Nothing here touches React, the database or the clock directly: every function takes a
+ * list and returns a new one. The same rules run on the server and in the browser, where
+ * the optimistic UI uses them to show a change before the server confirms it.
+ * Tests: tests/unit/rules.test.ts.
  */
 import type { Filter, Todo } from "./types";
 
 export const MAX_TEXT_LENGTH = 200;
 
-export function makeId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
-}
-
-/** Trim the text and cap its length. Returns "" for text that is only spaces. */
+/** Trim the text and collapse inner spaces. Returns "" for text that is only spaces. */
 export function cleanText(text: string): string {
-  return text.trim().replace(/\s+/g, " ").slice(0, MAX_TEXT_LENGTH);
+  return text.trim().replace(/\s+/g, " ");
 }
 
 export function addTodo(
   todos: readonly Todo[],
   text: string,
-  { id = makeId(), now = Date.now() }: { id?: string; now?: number } = {},
+  { id = crypto.randomUUID(), now = Date.now() }: { id?: string; now?: number } = {},
 ): Todo[] {
-  const clean = cleanText(text);
+  const clean = cleanText(text).slice(0, MAX_TEXT_LENGTH);
   if (!clean) return [...todos];
   return [...todos, { id, text: clean, completed: false, createdAt: now }];
 }

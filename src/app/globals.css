@@ -238,17 +238,34 @@ h1 {
   gap: 4px;
 }
 
-.filters button {
+.filters a {
   border: 1px solid transparent;
-  background: transparent;
   color: var(--text);
   border-radius: 6px;
   padding: 4px 8px;
-  cursor: pointer;
+  text-decoration: none;
 }
 
-.filters button[aria-pressed="true"] {
+.filters a[aria-current="page"] {
   border-color: var(--accent);
+}
+
+/* ---- v3: form errors and pending state ---- */
+
+#todo-form {
+  flex-wrap: wrap;
+}
+
+#todo-form button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.form-error {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--delete);
+  font-size: 0.9rem;
 }
 
 #clear-completed[hidden] {

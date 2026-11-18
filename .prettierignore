@@ -1,4 +1,6 @@
-dist
+.next
+next-env.d.ts
+drizzle/meta
 coverage
 playwright-report
 test-results
