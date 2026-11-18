@@ -1,0 +1,23 @@
+name: Feature idea
+description: Something the app should do
+labels: [feature]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+      description: Who needs it, and what do they do today without it?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should happen?
+      description: Describe it from the user's side. Screens or steps help.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: How will we know it works?
+      description: One or two checks we could turn into tests.
