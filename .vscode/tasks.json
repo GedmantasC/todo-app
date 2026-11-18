@@ -1,0 +1,38 @@
+{
+  // Terminal > Run Task… (or Ctrl+Shift+B for the default build task)
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev server",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      // Tells VS Code when the server is ready, so F5 (launch.json) waits for it.
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": { "regexp": "^__never_matches__$" },
+        "background": { "activeBegins": true, "beginsPattern": "VITE", "endsPattern": "Local:" }
+      }
+    },
+    {
+      "label": "Check everything (as CI does)",
+      "type": "npm",
+      "script": "check",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "Unit tests (watch)",
+      "type": "npm",
+      "script": "test:watch",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Browser tests",
+      "type": "npm",
+      "script": "test:e2e",
+      "problemMatcher": []
+    }
+  ]
+}

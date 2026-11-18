@@ -1,0 +1,11 @@
+{
+  // VS Code offers these when someone opens the folder for the first time.
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "vitest.explorer",
+    "ms-playwright.playwright",
+    "editorconfig.editorconfig",
+    "anthropic.claude-code"
+  ]
+}

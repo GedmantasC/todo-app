@@ -1,0 +1,25 @@
+{
+  // Shared settings: everyone who opens this folder formats and lints the same way.
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  // Hide generated folders from the explorer and search, so you only see what you edit.
+  "files.exclude": {
+    "**/node_modules": true,
+    "dist": true,
+    "coverage": true,
+    "playwright-report": true,
+    "test-results": true
+  },
+  "search.exclude": { "package-lock.json": true },
+
+  // Group related files under one in the explorer: package.json hides its lock file and configs.
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, .nvmrc, tsconfig.json, vite.config.ts, playwright.config.ts, eslint.config.js, .prettierrc.json, .prettierignore, .editorconfig, .gitattributes",
+    "AGENTS.md": "CLAUDE.md",
+    "README.md": "CHANGELOG.md"
+  }
+}

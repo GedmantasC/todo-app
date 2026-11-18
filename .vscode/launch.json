@@ -1,0 +1,14 @@
+{
+  // Run and Debug (F5): starts the dev server and opens Chrome with breakpoints in the .ts files.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug the app in Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Dev server"
+    }
+  ]
+}
