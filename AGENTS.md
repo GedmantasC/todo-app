@@ -24,6 +24,7 @@ Claude Code, Codex, Copilot and other agents read this file before they work her
 - Components don't talk to the database. They call Server Actions.
 - Change the database only through a migration. Never edit `drizzle/` by hand.
 - Never commit `.env` files.
+- To add a feature, follow the `add-feature` skill. Before a pull request, ask the `reviewer` agent.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

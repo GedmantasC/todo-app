@@ -28,6 +28,7 @@ todo-app/
 │   └── db/                   the database table and connection
 ├── drizzle/                  database migrations
 ├── tests/                    tests for rules.ts
+├── .claude/                  Claude Code: permissions, add-feature skill, reviewer agent
 ├── .vscode/                  shared editor settings
 ├── .github/workflows/        CI: tests and build on every push
 ├── AGENTS.md                 instructions for AI agents (CLAUDE.md points here)
