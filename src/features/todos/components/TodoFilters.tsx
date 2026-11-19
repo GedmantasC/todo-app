@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { FILTERS, type Filter } from "../domain/types";
+import { FILTERS, type Filter } from "../rules";
 
 const LABELS: Record<Filter, string> = { all: "All", active: "Active", completed: "Done" };
 
-/** Filters are links, not state: the URL is shareable and Back works. */
+// Filters are links, so the filter lives in the URL: /?filter=active
 export function TodoFilters({ current }: { current: Filter }) {
   return (
     <nav className="filters" aria-label="Filter tasks">

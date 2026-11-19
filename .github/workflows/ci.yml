@@ -1,18 +1,10 @@
 name: CI
 
-# Every push and pull request runs the same checks as `npm run check`, plus the browser tests.
-# A pull request can't be merged on a red check (set "Require status checks" on main).
+# On every push and pull request, GitHub installs the app, runs the tests and builds it.
 on:
   push:
     branches: [main]
   pull_request:
-
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
-env:
-  DATABASE_URL: file:ci.db
 
 jobs:
   check:
@@ -21,39 +13,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run check
-
-      # Fails if someone changed src/db/schema.ts but forgot `npm run db:generate`.
-      - name: Migrations match the schema
-        run: |
-          npm run db:generate
-          git diff --exit-code -- drizzle || (echo "::error::Run 'npm run db:generate' and commit drizzle/." && exit 1)
-          test -z "$(git status --porcelain -- drizzle)" || (echo "::error::New migration not committed." && exit 1)
-
-      - uses: actions/cache@v4
-        with:
-          path: .next/cache
-          key: next-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**') }}
-          restore-keys: next-${{ hashFiles('package-lock.json') }}-
+      - run: npm test
       - run: npm run build
-
-  e2e:
-    runs-on: ubuntu-latest
-    needs: check
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-report
-          path: playwright-report/

@@ -250,28 +250,7 @@ h1 {
   border-color: var(--accent);
 }
 
-/* ---- v3: form errors and pending state ---- */
-
-#todo-form {
-  flex-wrap: wrap;
-}
-
-#todo-form button:disabled {
-  opacity: 0.6;
-  cursor: progress;
-}
-
-.form-error {
-  flex-basis: 100%;
-  margin: 0;
-  color: var(--delete);
-  font-size: 0.9rem;
-}
-
-#clear-completed[hidden] {
-  display: none;
-}
-
+/* Hidden on screen, still read by screen readers */
 .visually-hidden {
   position: absolute;
   width: 1px;

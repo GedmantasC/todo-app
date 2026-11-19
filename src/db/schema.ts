@@ -1,9 +1,6 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-/**
- * The database tables. Change this file, then run `npm run db:generate` to write a
- * migration into drizzle/, and commit both. Never edit the database by hand.
- */
+// The todos table. After changing it, run `npm run db:generate` to write a migration into drizzle/.
 export const todos = sqliteTable("todos", {
   id: text("id").primaryKey(),
   text: text("text").notNull(),
@@ -11,4 +8,4 @@ export const todos = sqliteTable("todos", {
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
 });
 
-export type TodoRow = typeof todos.$inferSelect;
+export type Todo = typeof todos.$inferSelect;

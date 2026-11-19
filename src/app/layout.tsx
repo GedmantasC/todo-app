@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { THEME_COOKIE, parseTheme } from "@/features/theme/theme";
 import { ThemeToggle } from "@/features/theme/ThemeToggle";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "The Best App",
-  description: "A small to-do app, organised the way a real project is.",
+  description: "A small to-do app.",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
+  // The theme the user picked last time, saved in a cookie.
+  const saved = (await cookies()).get("theme")?.value;
+  const theme = saved === "light" || saved === "dark" ? saved : undefined;
 
   return (
     <html lang="en" data-theme={theme}>

@@ -1,25 +1,20 @@
-# Dependencies and build output: always rebuilt, never committed
+# Installed and built: always recreated, never committed
 node_modules/
 .next/
 next-env.d.ts
 *.tsbuildinfo
-coverage/
 
-# Local databases: the schema and migrations are committed, the data never is
+# The local database: the schema and migrations are committed, the data is not
 *.db
 *.db-journal
-*.db-wal
-*.db-shm
-playwright-report/
-test-results/
 
-# Local secrets and personal settings
+# Secrets and personal settings
 .env
 .env.*
 !.env.example
 .claude/settings.local.json
 
-# OS and editor noise
+# System files
 .DS_Store
 Thumbs.db
 *.log

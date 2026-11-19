@@ -1,4 +1,0 @@
-# Same line endings for everyone, on Windows and Mac alike
-* text=auto eol=lf
-*.svg text eol=lf
-*.png binary

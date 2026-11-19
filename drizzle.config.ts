@@ -1,13 +1,10 @@
 import { defineConfig } from "drizzle-kit";
 
-// Used by `npm run db:generate` (write a migration from src/db/schema.ts)
-// and `npm run db:migrate` (apply migrations to DATABASE_URL).
+// `npm run db:generate` writes a migration from src/db/schema.ts into drizzle/.
+// `npm run db:migrate` applies the migrations to the database.
 export default defineConfig({
   dialect: "turso",
   schema: "./src/db/schema.ts",
   out: "./drizzle",
-  dbCredentials: {
-    url: process.env.DATABASE_URL ?? "file:local.db",
-    authToken: process.env.DATABASE_AUTH_TOKEN,
-  },
+  dbCredentials: { url: process.env.DATABASE_URL ?? "file:local.db" },
 });

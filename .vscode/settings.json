@@ -1,29 +1,20 @@
 {
-  // Shared settings: everyone who opens this folder formats and lints the same way.
+  // Shared with everyone who opens this folder.
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
 
-  // Hide generated folders from the explorer and search, so you only see what you edit.
+  // Hide generated files, so the explorer shows only what you edit.
   "files.exclude": {
     "**/node_modules": true,
     ".next": true,
     "next-env.d.ts": true,
-    "**/*.tsbuildinfo": true,
-    "coverage": true,
-    "playwright-report": true,
-    "test-results": true
+    "**/*.tsbuildinfo": true
   },
-  "search.exclude": { "package-lock.json": true, "drizzle/meta": true },
 
-  // Group related files under one in the explorer: package.json hides its lock file and configs.
+  // Tuck config files under package.json in the explorer.
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json, .nvmrc, tsconfig.json, next.config.ts, drizzle.config.ts, vitest.config.ts, playwright.config.ts, eslint.config.js, .prettierrc.json, .prettierignore, .editorconfig, .gitattributes",
-    ".env.example": ".env, .env.local, *.db, *.db-*",
-    "AGENTS.md": "CLAUDE.md",
-    "README.md": "CHANGELOG.md"
+    "package.json": "package-lock.json, tsconfig.json, drizzle.config.ts",
+    ".env.example": ".env, .env.local, *.db",
+    "AGENTS.md": "CLAUDE.md"
   }
 }
